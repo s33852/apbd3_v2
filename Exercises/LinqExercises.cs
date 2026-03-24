@@ -16,7 +16,10 @@ public sealed class LinqExercises
     /// </summary>
     public IEnumerable<string> Task01_StudentsFromWarsaw()
     {
-        return UniversityData
+        return UniversityData.Students
+            .Where(s => s.City == "Warsaw")
+            .Select(s => $"{s.IndexNumber}, {s.FirstName}, {s.LastName}, {s.City}")
+            .ToList();
     }
 
     /// <summary>
@@ -30,7 +33,9 @@ public sealed class LinqExercises
     /// </summary>
     public IEnumerable<string> Task02_StudentEmailAddresses()
     {
-        throw NotImplemented(nameof(Task02_StudentEmailAddresses));
+        return UniversityData.Students
+            .Select(s => s.Email)
+            .ToList();
     }
 
     /// <summary>
@@ -45,8 +50,11 @@ public sealed class LinqExercises
     /// </summary>
     public IEnumerable<string> Task03_StudentsSortedAlphabetically()
     {
-        return UniversityData.Students.OrderBy(s => s.LastName).ThenBy(s => s.FirstName)
-            .Select(s => $"{s.IndexNumber}, {s.FirstName}, {s.LastName}").ToList();
+        return UniversityData.Students
+            .OrderBy(s => s.LastName)
+            .ThenBy(s => s.FirstName)
+            .Select(s => $"{s.IndexNumber}, {s.FirstName}, {s.LastName}")
+            .ToList();
     }
 
     /// <summary>
@@ -61,9 +69,11 @@ public sealed class LinqExercises
     /// </summary>
     public IEnumerable<string> Task04_FirstAnalyticsCourse()
     {
-        return UniversityData.Courses.Where(c => c.Category == "Analytics").Select(s => $"{s.Title},{s.}")
+        return [UniversityData.Courses
+            .Where(c => c.Category == "Analytics")
+            .Select(c => $"{c.Title}, {c.StartDate}")
+            .FirstOrDefault() ?? "No course found"];
     }
-
     /// <summary>
     /// Task:5
     /// Check whether there is at least one inactive enrollment in the data set.
@@ -78,9 +88,7 @@ public sealed class LinqExercises
     /// </summary>
     public IEnumerable<string> Task05_IsThereAnyInactiveEnrollment()
     {
-        return UniversityData.Enrollments.Exists(e => e.IsActive) ? "Yes" : "No")
-
-            ///something
+        return UniversityData.Enrollments.Exists(e => e.IsActive) ? "Yes" : "No");
     }
 
     /// <summary>
@@ -99,7 +107,7 @@ public sealed class LinqExercises
     }
 
     /// <summary>
-    /// Task:
+    /// Task:7
     /// Count how many active enrollments exist in the system.
     ///
     /// SQL:
@@ -113,7 +121,7 @@ public sealed class LinqExercises
     }
 
     /// <summary>
-    /// Task:
+    /// Task:8
     /// Return a sorted list of distinct student cities.
     ///
     /// SQL:
@@ -127,7 +135,7 @@ public sealed class LinqExercises
     }
 
     /// <summary>
-    /// Task:
+    /// Task:9
     /// Return the three newest enrollments.
     /// Show the enrollment date, student identifier, and course identifier.
     ///
@@ -138,11 +146,11 @@ public sealed class LinqExercises
     /// </summary>
     public IEnumerable<string> Task09_ThreeNewestEnrollments()
     {
-        throw NotImplemented(nameof(Task09_ThreeNewestEnrollments));
+        return UniversityData.Enrollments.OrderByDescending(e => e.EnrollmentData))
     }
 
     /// <summary>
-    /// Task:
+    /// Task:10
     /// Implement simple pagination for the course list.
     /// Assume a page size of 2 and return the second page of data.
     ///
@@ -158,7 +166,7 @@ public sealed class LinqExercises
     }
 
     /// <summary>
-    /// Task:
+    /// Task:11
     /// Join students with enrollments by StudentId.
     /// Return the full student name and the enrollment date.
     ///
@@ -173,7 +181,7 @@ public sealed class LinqExercises
     }
 
     /// <summary>
-    /// Task:
+    /// Task:12
     /// Prepare all student-course pairs based on enrollments.
     /// Use an approach that flattens the data into a single result sequence.
     ///
@@ -189,7 +197,7 @@ public sealed class LinqExercises
     }
 
     /// <summary>
-    /// Task:
+    /// Task:13
     /// Group enrollments by course and return the course title together with the number of enrollments.
     ///
     /// SQL:
@@ -204,7 +212,7 @@ public sealed class LinqExercises
     }
 
     /// <summary>
-    /// Task:
+    /// Task:14
     /// Calculate the average final grade for each course.
     /// Ignore records where the final grade is null.
     ///
@@ -221,7 +229,7 @@ public sealed class LinqExercises
     }
 
     /// <summary>
-    /// Task:
+    /// Task:15
     /// For each lecturer, count how many courses are assigned to that lecturer.
     /// Return the full lecturer name and the course count.
     ///
@@ -237,7 +245,7 @@ public sealed class LinqExercises
     }
 
     /// <summary>
-    /// Task:
+    /// Task:16
     /// For each student, find the highest final grade.
     /// Skip students who do not have any graded enrollment yet.
     ///
@@ -254,7 +262,7 @@ public sealed class LinqExercises
     }
 
     /// <summary>
-    /// Challenge:
+    /// Challenge:1
     /// Find students who have more than one active enrollment.
     /// Return the full name and the number of active courses.
     ///
@@ -272,7 +280,7 @@ public sealed class LinqExercises
     }
 
     /// <summary>
-    /// Challenge:
+    /// Challenge:2
     /// List the courses that start in April 2026 and do not have any final grades assigned yet.
     ///
     /// SQL:
@@ -289,7 +297,7 @@ public sealed class LinqExercises
     }
 
     /// <summary>
-    /// Challenge:
+    /// Challenge:3
     /// Calculate the average final grade for every lecturer across all of their courses.
     /// Ignore missing grades but still keep the lecturers in mind as the reporting dimension.
     ///
@@ -307,7 +315,7 @@ public sealed class LinqExercises
     }
 
     /// <summary>
-    /// Challenge:
+    /// Challenge:4
     /// Show student cities and the number of active enrollments created by students from each city.
     /// Sort the result by the active enrollment count in descending order.
     ///
