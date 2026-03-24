@@ -1,4 +1,5 @@
 using LinqConsoleLab.EN.Data;
+using LinqConsoleLab.EN.Models;
 
 namespace LinqConsoleLab.EN.Exercises;
 
@@ -79,6 +80,7 @@ public sealed class LinqExercises
     /// Check whether there is at least one inactive enrollment in the data set.
     /// Return one line with a True/False or Yes/No answer.
     ///
+    ///
     /// SQL:
     /// SELECT CASE WHEN EXISTS (
     ///     SELECT 1
@@ -88,9 +90,10 @@ public sealed class LinqExercises
     /// </summary>
     public IEnumerable<string> Task05_IsThereAnyInactiveEnrollment()
     {
-        return UniversityData.Enrollments.Exists(e => e.IsActive) ? "Yes" : "No");
+        return
+        [UniversityData.Enrollments
+                .Exists(e => e.IsActive) ? "Yes" : "No"];
     }
-
     /// <summary>
     /// Task:6
     /// Check whether every lecturer has a department assigned.
@@ -103,7 +106,9 @@ public sealed class LinqExercises
     /// </summary>
     public IEnumerable<string> Task06_DoAllLecturersHaveDepartment()
     {
-        throw NotImplemented(nameof(Task06_DoAllLecturersHaveDepartment));
+        return
+        [UniversityData.Lecturers
+                .Count(l => !string.IsNullOrEmpty(l.Department)) == UniversityData.Lecturers.Count ? "Yes" : "No"];
     }
 
     /// <summary>
@@ -117,7 +122,7 @@ public sealed class LinqExercises
     /// </summary>
     public IEnumerable<string> Task07_CountActiveEnrollments()
     {
-        throw NotImplemented(nameof(Task07_CountActiveEnrollments));
+        return [Enrollment.Count(e => e.IsActive == 1).ToString];
     }
 
     /// <summary>
