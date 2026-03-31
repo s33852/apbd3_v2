@@ -136,7 +136,7 @@ public sealed class LinqExercises
     /// </summary>
     public IEnumerable<string> Task08_DistinctStudentCities()
     {
-        throw NotImplemented(nameof(Task08_DistinctStudentCities));
+        return UniversityData.Students.OrderBy(s => s.City).Select(e => e.City).Distinct();
     }
 
     /// <summary>
@@ -167,7 +167,7 @@ public sealed class LinqExercises
     /// </summary>
     public IEnumerable<string> Task10_SecondPageOfCourses()
     {
-        throw NotImplemented(nameof(Task10_SecondPageOfCourses));
+        return UniversityData.Courses.OrderBy(c => c.Title).Skip(2).Take(2).Select(c => $"{c.Title} - {c.Category}");
     }
 
     /// <summary>
@@ -182,7 +182,11 @@ public sealed class LinqExercises
     /// </summary>
     public IEnumerable<string> Task11_JoinStudentsWithEnrollments()
     {
-        throw NotImplemented(nameof(Task11_JoinStudentsWithEnrollments));
+        return (from s in UniversityData.Students
+                join e in UniversityData.Enrollments
+                on s.Id equals e.StudentId
+                select $"{s.FirstName}, {s.LastName}, {e.EnrollmentDate}")
+          .ToList();
     }
 
     /// <summary>
@@ -198,7 +202,13 @@ public sealed class LinqExercises
     /// </summary>
     public IEnumerable<string> Task12_StudentCoursePairs()
     {
-        throw NotImplemented(nameof(Task12_StudentCoursePairs));
+        return (from e in UniversityData.Enrollments
+                join s in UniversityData.Students
+                on e.StudentId equals s.Id
+                join c in UniversityData.Courses
+                on e.CourseId equals c.Id
+                select $"{s.FirstName}, {s.LastName}, {c.Title}")
+          .ToList();
     }
 
     /// <summary>
@@ -213,7 +223,12 @@ public sealed class LinqExercises
     /// </summary>
     public IEnumerable<string> Task13_GroupEnrollmentsByCourse()
     {
-        throw NotImplemented(nameof(Task13_GroupEnrollmentsByCourse));
+        return (from e in UniversityData.Enrollments
+                join c in UniversityData.Courses
+                on e.CourseId equals c.Id
+                group e by c.Title into g
+                select $"{g.Key}, {g.Count()}")
+       .ToList();
     }
 
     /// <summary>
@@ -230,7 +245,13 @@ public sealed class LinqExercises
     /// </summary>
     public IEnumerable<string> Task14_AverageGradePerCourse()
     {
-        throw NotImplemented(nameof(Task14_AverageGradePerCourse));
+        return (from e in UniversityData.Enrollments
+                join c in UniversityData.Courses
+                on e.CourseId equals c.Id
+                where e.FinalGrade.HasValue
+                group e by c.Title into g
+                select $"{g.Key}, {g.Average(x => x.FinalGrade.Value)}")
+          .ToList();
     }
 
     /// <summary>
@@ -246,7 +267,11 @@ public sealed class LinqExercises
     /// </summary>
     public IEnumerable<string> Task15_LecturersAndCourseCounts()
     {
-        throw NotImplemented(nameof(Task15_LecturersAndCourseCounts));
+        return (from l in UniversityData.Lecturers
+                join c in UniversityData.Courses
+                on l.Id equals c.LecturerId into courseGroup
+                select $"{l.FirstName}, {l.LastName}, {courseGroup.Count()}")
+          .ToList();
     }
 
     /// <summary>
@@ -263,7 +288,13 @@ public sealed class LinqExercises
     /// </summary>
     public IEnumerable<string> Task16_HighestGradePerStudent()
     {
-        throw NotImplemented(nameof(Task16_HighestGradePerStudent));
+        t   return (from s in UniversityData.Students
+                    join e in UniversityData.Enrollments
+                    on s.Id equals e.StudentId
+                    where e.FinalGrade.HasValue
+                    group e by $"{s.FirstName}, {s.LastName}" into g
+                    select $"{g.Key}, {g.Max(x => x.FinalGrade.Value)}")
+          .ToList();
     }
 
     /// <summary>
@@ -281,7 +312,14 @@ public sealed class LinqExercises
     /// </summary>
     public IEnumerable<string> Challenge01_StudentsWithMoreThanOneActiveCourse()
     {
-        throw NotImplemented(nameof(Challenge01_StudentsWithMoreThanOneActiveCourse));
+        return (from s in UniversityData.Students
+                join e in UniversityData.Enrollments
+                on s.Id equals e.StudentId
+                where e.IsActive
+                group e by $"{s.FirstName}, {s.LastName}" into g
+                where g.Count() > 1
+                select $"{g.Key}, {g.Count()}")
+       .ToList();
     }
 
     /// <summary>
@@ -316,7 +354,14 @@ public sealed class LinqExercises
     /// </summary>
     public IEnumerable<string> Challenge03_LecturersAndAverageGradeAcrossTheirCourses()
     {
-        throw NotImplemented(nameof(Challenge03_LecturersAndAverageGradeAcrossTheirCourses));
+        return (from c in UniversityData.Courses
+                join e in UniversityData.Enrollments
+                on c.Id equals e.CourseId
+                where c.StartDate.Month == 4 && c.StartDate.Year == 2026
+                group e by c.Title into g
+                where g.All(x => !x.FinalGrade.HasValue)
+                select g.Key)
+          .ToList();
     }
 
     /// <summary>
@@ -334,7 +379,14 @@ public sealed class LinqExercises
     /// </summary>
     public IEnumerable<string> Challenge04_CitiesAndActiveEnrollmentCounts()
     {
-        throw NotImplemented(nameof(Challenge04_CitiesAndActiveEnrollmentCounts));
+        return (from s in UniversityData.Students
+                join e in UniversityData.Enrollments
+                on s.Id equals e.StudentId
+                where e.IsActive
+                group e by s.City into g
+                orderby g.Count() descending
+                select $"{g.Key}, {g.Count()}")
+         .ToList();
     }
 
     private static NotImplementedException NotImplemented(string methodName)
