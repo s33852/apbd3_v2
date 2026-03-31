@@ -319,7 +319,7 @@ public sealed class LinqExercises
                 group e by $"{s.FirstName}, {s.LastName}" into g
                 where g.Count() > 1
                 select $"{g.Key}, {g.Count()}")
-       .ToList();
+          .ToList();
     }
 
     /// <summary>
@@ -336,7 +336,14 @@ public sealed class LinqExercises
     /// </summary>
     public IEnumerable<string> Challenge02_AprilCoursesWithoutFinalGrades()
     {
-        throw NotImplemented(nameof(Challenge02_AprilCoursesWithoutFinalGrades));
+        return (from c in UniversityData.Courses
+                join e in UniversityData.Enrollments
+                on c.Id equals e.CourseId
+                where c.StartDate.Month == 4 && c.StartDate.Year == 2026
+                group e by c.Title into g
+                where g.All(x => !x.FinalGrade.HasValue)
+                select g.Key)
+          .ToList();
     }
 
     /// <summary>
@@ -354,13 +361,16 @@ public sealed class LinqExercises
     /// </summary>
     public IEnumerable<string> Challenge03_LecturersAndAverageGradeAcrossTheirCourses()
     {
-        return (from c in UniversityData.Courses
+        return (from l in UniversityData.Lecturers
+                join c in UniversityData.Courses
+                on l.Id equals c.LecturerId into courseGroup
+                from c in courseGroup.DefaultIfEmpty()
                 join e in UniversityData.Enrollments
-                on c.Id equals e.CourseId
-                where c.StartDate.Month == 4 && c.StartDate.Year == 2026
-                group e by c.Title into g
-                where g.All(x => !x.FinalGrade.HasValue)
-                select g.Key)
+                on c.Id equals e.CourseId into enrollGroup
+                from e in enrollGroup.DefaultIfEmpty()
+                where e != null && e.FinalGrade.HasValue
+                group e by $"{l.FirstName}, {l.LastName}" into g
+                select $"{g.Key}, {g.Average(x => x.FinalGrade.Value)}")
           .ToList();
     }
 
@@ -386,7 +396,7 @@ public sealed class LinqExercises
                 group e by s.City into g
                 orderby g.Count() descending
                 select $"{g.Key}, {g.Count()}")
-         .ToList();
+          .ToList();
     }
 
     private static NotImplementedException NotImplemented(string methodName)
